@@ -1,12 +1,7 @@
-// USD, CAD, 20
-// 20 USD is worth 26 CAD. You can spend these in the following countries: Canada
-
-// http://data.fixer.io/api/latest?access_key=d32d75de5146611ae7f23de0782ac09b
-
 const axios = require('axios');
 
 const getExchangeRate = async (from, to) => {
-  const response = await axios.get('http://data.fixer.io/api/latest?access_key=e2c742c2dafe7add63fder5t678u65r456');
+  const response = await axios.get('http://data.fixer.io/api/latest?access_key=e2c742c2dafe7add63b797f4178df3a4');
   const euro = 1 / response.data.rates[from];
   const rate = euro * response.data.rates[to];
   return rate;
@@ -17,10 +12,13 @@ const getCountries = async (currencyCode) => {
   return response.data.map((country) => country.name);
 };
 
-getExchangeRate('USD', 'CAD').then((rate) => {
-  console.log(rate);
-});
+const convertCurrency = async (from, to, amount) => {
+  const rate = await getExchangeRate(from, to);
+  const countries = await getCountries(to);
+  const convertedAmount = (amount * rate).toFixed(2);
+  return `${amount} ${from} is worth ${convertedAmount} ${to}. You can spend it in the following countries: ${countries.join(', ')}`;
+};
 
-getCountries('EUR').then((countries) => {
-  console.log(countries);
+convertCurrency('USD', 'USD', 20).then((message) => {
+  console.log(message);
 });
